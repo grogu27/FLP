@@ -1,0 +1,4 @@
+(print (cons 1 (cons (cons 2 nil) (cons 3 nil))))
+(print (list 1 (list 2) 3))
+
+;;(1 (2) 3)

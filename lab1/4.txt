@@ -1,0 +1,9 @@
+(defun swap-first-second (lst)
+  (append (list (car (cdr lst)))   
+          (list (car lst))         
+          (cdr (cdr lst))))
+
+(print (swap-first-second '(a b c d))) 
+(print (swap-first-second '(1 2 3)))  
+(print (swap-first-second '(q w e r t y u i o))) 
+
