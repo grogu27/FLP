@@ -1,0 +1,25 @@
+(defun check_element (el lst)
+    (cond
+         ((null lst) nil)
+         ((equal el (car lst)) t)
+         (t (check_element el (cdr lst)))
+    )
+)    
+
+
+(defun subsetp (subst st)
+    (cond
+      ((null subst) t)
+      ((null st) nil)
+      ((check_element (car subst) st)  (subsetp (cdr subst) st))
+      (t nil)
+    )  
+)    
+
+
+(print (subsetp '(q w) '(q w e r t y)))
+(print (subsetp '(r t) '(q w e r t y)))
+(print (subsetp '(e) '(q w e r t y)))
+(print (subsetp '() '(q w e r t y)))
+(print (subsetp '(a b) '(q w e r t y)))
+(print (subsetp '(a) '(q w e r t y)))
