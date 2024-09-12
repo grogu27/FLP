@@ -1,0 +1,13 @@
+;gnu clisp  2.49.60
+
+(defun number_12 (lst)
+        (cond 
+            ((= (length lst) 1) (cons lst nil))
+              ((null lst) nil)
+                    (t (cons (cons (first lst) (last lst))  (number_12 (cdr(butlast lst)))           ))
+        )
+)
+
+
+(trace number_12)
+(print (number_12 '(1 a b c 2 3 f))) 

@@ -1,20 +1,23 @@
 ;gnu clisp  2.49.60
 
 (defun double-elements (lst)
-  (if (null lst)                            ; Проверяем, пуст ли список
-      nil                                   ; Если пустой, возвращаем nil
-      (cons (car lst)                       ; Конс добавляет первый элемент к результату
-            (cons (car lst)                  ; Добавляем тот же элемент еще раз
-                  (double-elements (cdr lst)))))) ; Рекурсивно вызываем для остальной части списка
+  (if (null lst)                            
+      nil                                   
+      (cons (car lst)                       
+            (cons (car lst)                  
+                  (double-elements (cdr lst)))))) 
 
-(print (double-elements '(1 a b 3))) ; => (1 1 a a b b 3 3)
-
-;### Собираем всё вместе
-
-;Теперь мы собираем всё вместе, начиная с последнего вызова:
-
-;1. Пятый вызов вернул `nil`.
-;2. Четвертый вызов вернул `(cons 3 (nil))`, то есть мы получили `(3 3)`.
-;3. Третий вызов вернул `(cons 'b (3 3))`, то есть мы получили `(b b 3 3)`.
-;4. Второй вызов вернул `(cons 'a (b b 3 3))`, то есть мы получили `(a a b b 3 3)`.
-;5. Первый вызов вернул `(cons 1 (a a b b 3 3))`, и в конце у нас получился окончательный результат `'(1 1 a a b b 3 3)`.
+(defun double-elements2 (lst2)
+    (cond
+         ((null lst2) nil)
+         (t (cons(car lst2) 
+                 (cons(car lst2) 
+                      (double-elements2 (cdr lst2)))))
+    
+)
+)    
+    
+(trace double-elements)
+(trace double-elements2)
+(print (double-elements '(1 a b 3))) 
+(print (double-elements2 '(1 a b 3))) 

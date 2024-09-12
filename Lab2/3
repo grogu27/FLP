@@ -1,0 +1,10 @@
+(defun remove-elements-by-index (lst1 lst2 &optional (index 1))
+  (cond
+    ((null lst1) nil)                            ; Если первый список пуст, вернуть пустой список
+    ((null lst2) lst1)                           ; Если список индексов пуст, вернуть первый список
+    ((= index (first lst2))                      ; Если текущий индекс совпадает с первым индексом для удаления
+     (remove-elements-by-index (cdr lst1) (cdr lst2) (1+ index)))  ; Удаляем элемент и продолжаем с увеличением индекса
+    (t (cons (car lst1)                          ; В противном случае добавляем текущий элемент в результат
+             (remove-elements-by-index (cdr lst1) lst2 (1+ index))))))  ; И продолжаем с увеличением индекса
+
+(print (remove-elements-by-index '(a s d f g h j k l) '(1 4 5 8)))
