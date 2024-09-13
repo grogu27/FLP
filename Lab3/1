@@ -23,3 +23,18 @@
 (print (subsetp '() '(q w e r t y)))
 (print (subsetp '(a b) '(q w e r t y)))
 (print (subsetp '(a) '(q w e r t y)))
+
+//////////////\\\\\\\____Best Decision____///////\\\\\\\\\\\\\
+
+(print(defun member_s(x l)
+ (cond
+ ((null l) NIL)
+ ((equal x (car l)) T)
+ (t (member_s x (cdr l)))
+ )))
+
+;(trace member_s)
+(print(member_s '(2 3 1) '(10 (2 3 1) 4 1 8)))
+(print(member_s 4'(4 (2 3 1) 4 1 8)))
+(print(member_s '(4 3 1) '(10 (2 3 1) 4 1 8)))
+(print(member_s 10 '(10) ))
