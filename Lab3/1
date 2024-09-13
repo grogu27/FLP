@@ -26,15 +26,21 @@
 
 //////////////\\\\\\\____Best Decision____///////\\\\\\\\\\\\\
 
-(print(defun member_s(x l)
- (cond
- ((null l) NIL)
- ((equal x (car l)) T)
- (t (member_s x (cdr l)))
- )))
+(defun member_s (x l)
+  (cond
+    ((null l) NIL)
+    ((equal x (car l)) T)
+    (t (member_s x (cdr l)))))
 
-;(trace member_s)
-(print(member_s '(2 3 1) '(10 (2 3 1) 4 1 8)))
-(print(member_s 4'(4 (2 3 1) 4 1 8)))
-(print(member_s '(4 3 1) '(10 (2 3 1) 4 1 8)))
-(print(member_s 10 '(10) ))
+(defun subset_s (set1 set2)
+  (cond
+    ((null set1) T)  ; Если первое множество пустое, оно подмножество любого другого множества
+    ((member_s (car set1) set2)  ; Проверяем, что первый элемент первого множества есть во втором
+     (subset_s (cdr set1) set2))  ; Рекурсивно проверяем остальные элементы
+    (t NIL)))  ; Если хотя бы один элемент не найден, возвращаем NIL
+
+(print (subset_s '(2 3 1) '(10 (2 3 1) 4 1 8)))  ; Вернёт NIL, так как список '(2 3 1) не является элементом второго множества
+(print (subset_s '(2 3 1) '(2 3 1 4 1 8)))       ; Вернёт T, так как все элементы первого множества есть во втором
+(print (subset_s '(4) '(10 (2 3 1) 4 1 8)))      ; Вернёт T
+(print (subset_s '(10) '(10)))                   ; Вернёт T
+(print (subset_s '(1 2 3) '(3 2 1)))             ; Вернёт T, так как порядок элементов не важен
