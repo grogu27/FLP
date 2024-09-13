@@ -23,8 +23,7 @@
 (print (unionp '() '(q w e r t y)))       
 (print (unionp '(q w e r t y) '()))       
 
-
-
+//////////////\\\\\\\____Best Decision____///////\\\\\\\\\\\\\
 
 (defun member_s (x l)
   (cond
