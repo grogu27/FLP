@@ -22,3 +22,24 @@
 (print (unionp '(q) '(w e r t y)))       
 (print (unionp '() '(q w e r t y)))       
 (print (unionp '(q w e r t y) '()))       
+
+
+
+
+(defun member_s (x l)
+  (cond
+    ((null l) NIL)
+    ((equal x (car l)) T)
+    (t (member_s x (cdr l)))))
+
+(defun union_s (set1 set2)
+  (cond
+    ((null set1) set2)  ; Если первое множество пустое, возвращаем второе множество
+    ((member_s (car set1) set2)  ; Если первый элемент первого множества уже есть во втором
+     (union_s (cdr set1) set2))  ; продолжаем с остальными элементами
+    (t (cons (car set1) (union_s (cdr set1) set2)))))  ; Добавляем элемент к результату
+
+(print (union_s '(1 2 3) '(3 4 5)))   ; Вернёт (1 2 3 4 5)
+(print (union_s '(a b c) '(b c d)))   ; Вернёт (a b c d)
+(print (union_s '(1 2 3) '(4 5 6)))   ; Вернёт (1 2 3 4 5 6)
+(print (union_s '(1 2) '(2 3 4 5)))   ; Вернёт (1 2 3 4 5)
