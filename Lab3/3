@@ -1,0 +1,11 @@
+(defun replace-if-not (pred lst)
+  (cond
+    ((null lst) nil)  ; Если список пустой, возвращаем пустой список
+    ((funcall pred (car lst))  ; Если первый элемент удовлетворяет предикату
+     (cons (car lst) (replace-if-not pred (cdr lst))))  ; добавляем его в результат
+    (t (cons '* (replace-if-not pred (cdr lst))))))  ; Иначе заменяем его на символ '*' и продолжаем
+
+;Пример использования с предикатом для чисел:
+(print (replace-if-not #'numberp '(1 "a" 3 'b 5)))  ; Вернёт (1 * 3 * 5)
+;Пример использования с лямбда-функцией для отрицательных чисел:
+(print (replace-if-not (lambda (x) (and (numberp x) (< x 0))) '(1 -2 "a" -3 'b 5)))  ; Вернёт (* -2 * -3 * *)
