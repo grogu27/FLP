@@ -1,0 +1,15 @@
+; 1. Предикат для вывода всех нечётных чисел из диапазона в порядке убывания
+
+odd_numbers_desc :-
+    writeln('Введите начальное значение диапазона: '),
+    read(Start),
+    writeln('Введите конечное значение диапазона: '),
+    read(End),
+    print_odd_desc(Start, End).
+
+print_odd_desc(Start, End) :-
+    (Start > End -> true ; (
+        Start mod 2 =:= 1 -> writeln(Start) ; true
+    )),
+    Next is Start - 1,
+    print_odd_desc(Next, End).
