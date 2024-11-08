@@ -1,0 +1,32 @@
+; 4. Предикат для нахождения наиболее часто встречающихся элементов в списке
+most_frequent :-
+    writeln('Введите список: '),
+    read(List),
+    count_frequencies(List, FreqList),
+    find_max_count(FreqList, MaxCount),
+    find_elements_with_max_count(FreqList, MaxCount, Result),
+    format('Наиболее частые элементы: ~w~n', [Result]).
+
+count_frequencies([], []).
+count_frequencies([H|T], FreqList) :-
+    count_frequencies(T, FreqT),
+    update_frequency(H, FreqT, FreqList).
+
+update_frequency(X, [], [[X,1]]).
+update_frequency(X, [[X,N]|T], [[X,N1]|T]) :-
+    N1 is N + 1.
+update_frequency(X, [[Y,N]|T], [[Y,N]|T1]) :-
+    X \= Y,
+    update_frequency(X, T, T1).
+
+find_max_count([[_,N]], N).
+find_max_count([[_,N]|T], Max) :-
+    find_max_count(T, MaxTail),
+    Max is max(N, MaxTail).
+
+find_elements_with_max_count([], _, []).
+find_elements_with_max_count([[X,N]|T], N, [X|Result]) :-
+    find_elements_with_max_count(T, N, Result).
+find_elements_with_max_count([[_,N1]|T], N, Result) :-
+    N1 \= N,
+    find_elements_with_max_count(T, N, Result).

@@ -1,0 +1,138 @@
+Задача 1: Печать всех нечётных чисел из диапазона в порядке убывания
+Эта функция запрашивает у пользователя два числа, задающих границы диапазона, и выводит все нечётные числа в этом диапазоне в убывающем порядке.
+
+prolog
+Копировать код
+odd_numbers_desc :-
+    writeln('Введите начальное значение диапазона: '),
+    read(Start),
+    writeln('Введите конечное значение диапазона: '),
+    read(End),
+    print_odd_desc(Start, End).
+odd_numbers_desc — основная функция, которая выводит запросы для пользователя. Она запрашивает границы диапазона (начальное и конечное значение) и запускает функцию print_odd_desc для вывода чисел.
+prolog
+Копировать код
+print_odd_desc(Start, End) :-
+    (Start > End -> true ; (
+        Start mod 2 =:= 1 -> writeln(Start) ; true
+    )),
+    Next is Start - 1,
+    print_odd_desc(Next, End).
+print_odd_desc(Start, End) — рекурсивная функция для печати нечётных чисел.
+Сначала проверяет, закончился ли диапазон (Start > End). Если да, то выполнение завершено.
+Если число нечётное (Start mod 2 =:= 1), оно выводится (writeln(Start)).
+Затем функция уменьшает Start на 1 и снова вызывает саму себя, пока не достигнет End.
+
+#####################################################################################################################
+
+Задача 2: Нахождение чисел Фибоначчи по номерам (с циклом repeat)
+Эта функция запрашивает у пользователя номер числа Фибоначчи и вычисляет его. Она продолжает работу, пока не будет введено отрицательное число.
+
+prolog
+Копировать код
+fib_numbers :-
+    repeat,
+    writeln('Введите номер числа Фибоначчи (отрицательное число для завершения): '),
+    read(N),
+    (N < 0 -> ! ; (
+        fibonacci(N, Fib),
+        format('Число Фибоначчи под номером ~d: ~d~n', [N, Fib]),
+        fail
+    )).
+fib_numbers — основной цикл с использованием repeat.
+repeat запускает цикл, запрашивая номер числа Фибоначчи.
+Если введено отрицательное число, цикл завершается благодаря ! (это специальный оператор, который прерывает цикл).
+Если число неотрицательное, вызывается функция fibonacci для вычисления числа, и оно выводится на экран.
+fail возвращает выполнение к repeat, создавая бесконечный цикл, пока не встретится !.
+prolog
+Копировать код
+fibonacci(0, 1).
+fibonacci(1, 1).
+fibonacci(N, F) :-
+    N > 1,
+    N1 is N - 1, N2 is N - 2,
+    fibonacci(N1, F1), fibonacci(N2, F2),
+    F is F1 + F2.
+fibonacci(N, F) — рекурсивная функция, вычисляющая числа Фибоначчи.
+Начальные условия: F(0) = 1, F(1) = 1.
+Если N > 1, функция вызывает себя дважды, вычисляя предыдущее и предпредыдущее числа Фибоначчи. Затем результат складывается.
+
+#####################################################################################################################
+
+Задача 3: Разбиение списка по двум введённым значениям
+Эта функция делит список на три части: меньше первого числа, между двумя числами и больше второго числа.
+
+prolog
+Копировать код
+split_list :-
+    writeln('Введите список: '),
+    read(List),
+    writeln('Введите первое число: '),
+    read(A),
+    writeln('Введите второе число: '),
+    read(B),
+    (A =< B -> Min = A, Max = B ; Min = B, Max = A),
+    split_by_bounds(List, Min, Max, Less, Middle, Greater),
+    format('Меньше ~w: ~w~n', [Min, Less]),
+    format('От ~w до ~w: ~w~n', [Min, Max, Middle]),
+    format('Больше ~w: ~w~n', [Max, Greater]).
+split_list — запрашивает список и два числа, затем сортирует числа так, чтобы меньшее стало Min, а большее — Max.
+Вызывает split_by_bounds для создания трёх списков, которые потом выводятся.
+prolog
+Копировать код
+split_by_bounds([], _, _, [], [], []).
+split_by_bounds([H|T], Min, Max, [H|Less], Middle, Greater) :-
+    H < Min, split_by_bounds(T, Min, Max, Less, Middle, Greater).
+split_by_bounds([H|T], Min, Max, Less, [H|Middle], Greater) :-
+    H >= Min, H =< Max, split_by_bounds(T, Min, Max, Less, Middle, Greater).
+split_by_bounds([H|T], Min, Max, Less, Middle, [H|Greater]) :-
+    H > Max, split_by_bounds(T, Min, Max, Less, Middle, Greater).
+split_by_bounds([H|T], Min, Max, Less, Middle, Greater) — рекурсивно обрабатывает элементы списка, разделяя их на три подсписка в зависимости от значений Min и Max.
+
+#####################################################################################################################
+
+Задача 4: Нахождение наиболее часто встречающихся элементов в списке
+Эта функция создаёт список элементов, которые встречаются в исходном списке чаще других.
+
+prolog
+Копировать код
+most_frequent :-
+    writeln('Введите список: '),
+    read(List),
+    count_frequencies(List, FreqList),
+    find_max_count(FreqList, MaxCount),
+    find_elements_with_max_count(FreqList, MaxCount, Result),
+    format('Наиболее частые элементы: ~w~n', [Result]).
+most_frequent — запрашивает список, считает частоту каждого элемента (через count_frequencies), находит максимальную частоту (через find_max_count) и выводит элементы с этой частотой (через find_elements_with_max_count).
+prolog
+Копировать код
+count_frequencies([], []).
+count_frequencies([H|T], FreqList) :-
+    count_frequencies(T, FreqT),
+    update_frequency(H, FreqT, FreqList).
+count_frequencies([H|T], FreqList) — рекурсивно создаёт список частот для каждого элемента, вызывая update_frequency.
+prolog
+Копировать код
+update_frequency(X, [], [[X,1]]).
+update_frequency(X, [[X,N]|T], [[X,N1]|T]) :-
+    N1 is N + 1.
+update_frequency(X, [[Y,N]|T], [[Y,N]|T1]) :-
+    X \= Y,
+    update_frequency(X, T, T1).
+update_frequency(X, [[X,N]|T], [[X,N1]|T]) — увеличивает счётчик, если элемент уже в списке, или добавляет его, если его ещё нет.
+prolog
+Копировать код
+find_max_count([[_,N]], N).
+find_max_count([[_,N]|T], Max) :-
+    find_max_count(T, MaxTail),
+    Max is max(N, MaxTail).
+find_max_count — находит максимальную частоту в списке частот.
+prolog
+Копировать код
+find_elements_with_max_count([], _, []).
+find_elements_with_max_count([[X,N]|T], N, [X|Result]) :-
+    find_elements_with_max_count(T, N, Result).
+find_elements_with_max_count([[_,N1]|T], N, Result) :-
+    N1 \= N,
+    find_elements_with_max_count(T, N, Result).
+find_elements_with_max_count — собирает все элементы, частота которых равна максимальной, в результирующий список.
