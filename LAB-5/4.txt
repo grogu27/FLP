@@ -1,4 +1,4 @@
-; 4. Предикат для нахождения наиболее часто встречающихся элементов в списке
+% 4. Предикат для нахождения наиболее часто встречающихся элементов в списке
 most_frequent :-
     writeln('Введите список: '),
     read(List),
@@ -30,3 +30,5 @@ find_elements_with_max_count([[X,N]|T], N, [X|Result]) :-
 find_elements_with_max_count([[_,N1]|T], N, Result) :-
     N1 \= N,
     find_elements_with_max_count(T, N, Result).
+
+?- most_frequent.
