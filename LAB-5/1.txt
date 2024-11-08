@@ -9,13 +9,9 @@ odd_numbers_desc :-
 
 % Печатает нечётные числа от Start до End (в убывающем порядке)
 print_odd_desc(Start, End) :-
-    Start >= End,       % Условие продолжения рекурсии
-    (Start mod 2 =:= 1 -> writeln(Start) ; true),
-    Next is Start - 1,
-    print_odd_desc(Next, End).
-
-% Завершает рекурсию, когда Start < End
-print_odd_desc(Start, End) :-
-    Start < End.
+    (Start < End -> true ;               % Завершает рекурсию, если Start < End
+     (Start mod 2 =:= 1 -> writeln(Start) ; true), % Печать числа, если нечётное
+     Next is Start - 1,
+     print_odd_desc(Next, End)).         % Рекурсивный вызов
 
 ?- odd_numbers_desc.
