@@ -1,0 +1,98 @@
+% Определяем динамический предикат для хранения данных о рейсах
+:- dynamic flight/4.
+
+% Загрузка и сохранение базы данных
+load_flights(File) :-
+    exists_file(File) -> consult(File) ; true.
+
+save_flights(File) :-
+    tell(File), % указывает файл для записи
+    listing(flight), % выводит все факты о flight/4 в этот файл,
+    told. % завершает запись в файл.
+
+% Добавление рейсов
+add_flight(Number, Destination, DepartureTime, Price) :-
+    assertz(flight(Number, Destination, DepartureTime, Price)).
+
+add_flights :- 
+    repeat,
+    writeln('Введите номер рейса (или stop для завершения):'),
+    read(Number),
+    (Number = stop -> !;
+     writeln('Введите пункт назначения:'),
+     read(Destination),
+     writeln('Введите время отправления (формат ЧЧММ):'),
+     read(DepartureTime),
+     writeln('Введите стоимость билета:'),
+     read(Price),
+     add_flight(Number, Destination, DepartureTime, Price),
+     writeln('Рейс добавлен.')).
+
+% Удаление рейсов
+delete_flights :- 
+    repeat,
+    writeln('Введите номер рейса для удаления (или stop для завершения):'),
+    read(Number),
+    (Number = stop -> !;
+     retractall(flight(Number, _, _, _)),
+     writeln('Рейс удален, если он существовал.')).
+
+% Просмотр базы данных
+view_flights :- 
+    forall(flight(Number, Destination, DepartureTime, Price),
+           format('Рейс ~w в ~w, отправление: ~w, цена: ~w~n', 
+                  [Number, Destination, DepartureTime, Price])).
+
+% Поиск рейсов
+flights_within_6_hours(Destination, CurrentTime, Flights) :-
+    findall([Number, DepartureTime, Price],
+        (flight(Number, Destination, DepartureTime, Price),
+         departure_within_6_hours(CurrentTime, DepartureTime)),
+        Flights).
+
+departure_within_6_hours(CurrentTime, DepartureTime) :-
+    CurrentHour is CurrentTime // 100,
+    DepartureHour is DepartureTime // 100,
+    ( (DepartureHour >= CurrentHour, DepartureHour =< CurrentHour + 6)
+    ; (DepartureHour + 24 =< CurrentHour + 6) ).
+
+find_min_price_flight(Flights, MinPriceFlights) :-
+    maplist(third_element, Flights, Prices),
+    min_list(Prices, MinPrice),
+    include(has_price(MinPrice), Flights, MinPriceFlights).
+
+third_element([_, _, Price], Price).
+has_price(Price, [_, _, Price]).
+
+query_flights :- 
+    writeln('Введите пункт назначения:'),
+    read(Destination),
+    writeln('Введите текущее время (формат ЧЧММ):'),
+    read(CurrentTime),
+    flights_within_6_hours(Destination, CurrentTime, Flights),
+    (Flights \= [] ->
+        find_min_price_flight(Flights, MinPriceFlights),
+        writeln('Рейсы с минимальной стоимостью в ближайшие 6 часов:'),
+        writeln(MinPriceFlights)
+    ; writeln('Нет рейсов, удовлетворяющих условиям.')).
+
+% Главное меню
+manage_flights :-
+    writeln('Введите имя файла базы данных (например, flights.pl):'),
+    read(DatabaseFile),
+    load_flights(DatabaseFile),
+    repeat,
+    writeln('Меню:'),
+    writeln('1. Просмотр базы данных'),
+    writeln('2. Добавить записи'),
+    writeln('3. Удалить записи'),
+    writeln('4. Выполнить запрос'),
+    writeln('5. Выйти с сохранением'),
+    read(Choice),
+    (Choice = 1 -> view_flights;
+     Choice = 2 -> add_flights;
+     Choice = 3 -> delete_flights;
+     Choice = 4 -> query_flights;
+     Choice = 5 -> save_flights(DatabaseFile), writeln('База данных сохранена. Выход.'), !;
+     writeln('Неверный выбор, попробуйте снова.')),
+    fail.
