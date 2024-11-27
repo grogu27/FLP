@@ -1,26 +1,37 @@
-% Задача 2.10: Найти слова минимальной длины в файле
-% read_words(+FileName, -Words) — считывает все слова из файла и возвращает их в виде списка.
+:- use_module(library(lists)).
+
+% read_words(+FileName, -Words) — считывает слова из файла.
 read_words(FileName, Words) :-
     open(FileName, read, Stream),
-    read_stream_to_terms(Stream, Words),
+    read_stream_to_words(Stream, Words),
     close(Stream).
 
-% read_stream_to_terms(+Stream, -Words) — рекурсивно считывает слова из потока.
-read_stream_to_terms(Stream, []) :-
-    at_end_of_stream(Stream).
-read_stream_to_terms(Stream, [Word|Words]) :-
-    \+ at_end_of_stream(Stream),
-    read(Stream, Word),
-    read_stream_to_terms(Stream, Words).
+% read_stream_to_words(+Stream, -Words) — считывает слова из всех строк файла.
+read_stream_to_words(Stream, Words) :-
+    read_lines(Stream, Lines),
+    maplist(line_to_words, Lines, NestedWords),
+    flatten(NestedWords, Words).
 
-% min_length_words(+Words, -MinWords) — находит все слова минимальной длины.
+% read_lines(+Stream, -Lines) — читает строки из потока.
+read_lines(Stream, []) :-
+    at_end_of_stream(Stream).
+read_lines(Stream, [Line|Lines]) :-
+    \+ at_end_of_stream(Stream),
+    read_line_to_string(Stream, Line),
+    read_lines(Stream, Lines).
+
+% line_to_words(+Line, -Words) — разбивает строку на слова.
+line_to_words(Line, Words) :-
+    split_string(Line, " \t\n", "", Words).
+
+% min_length_words(+Words, -MinWords) — находит слова минимальной длины.
 min_length_words(Words, MinWords) :-
-    maplist(atom_length, Words, Lengths),
+    maplist(string_length, Words, Lengths),
     min_list(Lengths, Min),
     include(length_is(Min), Words, MinWords).
 
 length_is(Len, Word) :-
-    atom_length(Word, Len).
+    string_length(Word, Len).
 
 % write_words(+FileName, +Words) — записывает слова в файл.
 write_words(FileName, Words) :-
@@ -34,15 +45,16 @@ find_min_length_words :-
     read(InputFile),
     writeln('Введите имя выходного файла:'),
     read(OutputFile),
-    read_words(InputFile, Words),
-    min_length_words(Words, MinWords),
-    write_words(OutputFile, MinWords),
-    writeln('Слова минимальной длины записаны в файл').
+    (   catch(read_words(InputFile, Words), _, fail)
+    ->  min_length_words(Words, MinWords),
+        write_words(OutputFile, MinWords),
+        writeln('Слова минимальной длины записаны в файл.')
+    ;   writeln('Ошибка: невозможно открыть или прочитать файл.')
+    ).
 
-?- find_min_length_words.
-% Введите имя исходного файла:
-% |: input.txt.
-% Введите имя выходного файла:
-% |: output.txt.
-% Слова минимальной длины записаны в файл
+ ?- find_min_length_words.
 
+Введите имя исходного файла:
+|: 'D:\\Документы\\Prolog\\input.txt'.
+Введите имя выходного файла:
+|: 'D:\\Документы\\Prolog\\output.txt'.
